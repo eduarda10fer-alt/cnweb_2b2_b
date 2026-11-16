@@ -13,8 +13,6 @@ dados_sensor = {
     "timestamp":"",
     "ultima_gravacao":"--:--:--",
     "ultimo_valor":"--"
-    ;
-
 }
 
 PORTA_SERIAL = 'COM11'
@@ -32,4 +30,21 @@ def ler_portas_serial():
         print(f"conectado ao arduino na porta: {PORTA_SERIAL}")
         while True:
             if ser.in_waiting > 0:
-                linha =
+                linha = ser.readline().decode('utf-8').strip()
+
+                if "Distancia -" in linha:
+                    try:
+                        valor_str = linha.split("-")[1].strip()
+                        distancia_atual = float(valor_str)
+                        dados_sensor["distancia"] = distancia_atual
+                        dados_sensor["timestamp"] = time.time()
+                    except ValueError:
+                        pass
+    except Exception as e:
+        print(f'Erro na comunicação serial: {e}')
+
+        time.sleep(5)
+        print("Tentando reconectar...")
+
+HTML_TEMPLATE = """
+"""
